@@ -10,7 +10,6 @@
 <title>App Now | פתרונות דיגיטל מתקדמים</title>
 
 <link rel="manifest" href="manifest.json">
-
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@100;300;400;700;900&display=swap" rel="stylesheet">
 
 <style>
@@ -96,8 +95,6 @@ transition: 0.2s; cursor: pointer;
 .card-info p { margin: 4px 0 0 0; color: var(--text-dim); font-size: 0.9rem; }
 
 .form-section { background: var(--card-bg); padding: 25px; border-radius: 28px; border: 1px solid var(--border); }
-.input-group { margin-bottom: 15px; }
-label { display: block; margin-bottom: 8px; font-size: 0.9rem; color: var(--text-dim); padding-right: 5px; }
 input, select {
 width: 100%; padding: 18px; background: rgba(0,0,0,0.3);
 border: 1px solid var(--border); border-radius: 16px;
@@ -142,6 +139,39 @@ box-shadow: 0 10px 20px rgba(0,0,0,0.2);
 }
 .bubble.show { opacity: 1; transform: translateY(0); }
 
+/* --- NEW CHAT SYSTEM CSS --- */
+#chat-fab {
+position: fixed; z-index: 100; bottom: 80px; right: 20px;
+width: 60px; height: 60px; background: var(--primary);
+border-radius: 50%; display: flex; align-items: center; justify-content: center;
+font-size: 28px; cursor: pointer; box-shadow: 0 10px 25px rgba(0,122,255,0.4);
+transition: 0.3s;
+}
+#chat-fab:active { transform: scale(0.9); }
+
+#chat-window {
+position: fixed; bottom: 155px; right: 20px;
+width: 320px; height: 450px; background: #1c1c1e;
+border-radius: 24px; border: 1px solid var(--border);
+display: flex; flex-direction: column; z-index: 1000;
+box-shadow: 0 15px 50px rgba(0,0,0,0.5); overflow: hidden;
+transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.chat-hidden { opacity: 0; transform: translateY(50px) scale(0.8); pointer-events: none; }
+
+.chat-header { background: #2c2c2e; padding: 15px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); }
+.chat-messages { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+.msg { padding: 10px 15px; border-radius: 18px; max-width: 85%; font-size: 0.9rem; line-height: 1.4; animation: msgFade 0.3s forwards; }
+.msg.bot { background: var(--card-bg); align-self: flex-start; color: white; border-bottom-right-radius: 4px; }
+.msg.user { background: var(--primary); align-self: flex-end; color: white; border-bottom-left-radius: 4px; }
+
+.typing { font-size: 0.8rem; color: var(--text-dim); padding: 5px 15px; display: none; }
+.chat-footer { padding: 10px; background: #1c1c1e; display: flex; gap: 8px; border-top: 1px solid var(--border); }
+.chat-footer input { padding: 12px; font-size: 0.9rem; border-radius: 12px; }
+.chat-footer button { background: var(--primary); border: none; color: white; padding: 0 15px; border-radius: 12px; cursor: pointer; }
+
+@keyframes msgFade { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+
 .modal {
 position: fixed; top: 0; left: 0; width: 100%; height: 100%;
 background: rgba(0,0,0,0.85); backdrop-filter: blur(10px);
@@ -158,61 +188,22 @@ background: var(--card-bg); border-radius: 50%; border: none; color: #fff;
 font-size: 1.2rem;
 }
 
-/* Portfolio Specific CSS */
-.video-grid {
-display: flex; flex-wrap: wrap; gap: 15px;
-justify-content: center; margin-top: 20px;
-}
-.video-item {
-width: 100px; height: 100px; border-radius: 50%;
-overflow: hidden; border: 2.5px solid var(--primary);
-box-shadow: 0 0 15px rgba(0, 122, 255, 0.4);
-}
+.video-grid { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; margin-top: 20px; }
+.video-item { width: 100px; height: 100px; border-radius: 50%; overflow: hidden; border: 2.5px solid var(--primary); box-shadow: 0 0 15px rgba(0, 122, 255, 0.4); }
 .video-item video { width: 100%; height: 100%; object-fit: cover; }
 
 .testimonial { display: flex; align-items: flex-start; gap: 15px; margin-bottom: 25px; }
-.user-img {
-width: 60px; height: 60px; border-radius: 50%;
-border: 2px solid var(--accent); object-fit: cover; flex-shrink: 0;
-}
-.chat-bubble {
-background: var(--card-bg); border: 1px solid var(--border);
-padding: 15px; border-radius: 20px 20px 0 20px;
-font-size: 0.95rem; line-height: 1.5; position: relative;
-backdrop-filter: blur(10px);
-}
+.user-img { width: 60px; height: 60px; border-radius: 50%; border: 2px solid var(--accent); object-fit: cover; flex-shrink: 0; }
+.chat-bubble { background: var(--card-bg); border: 1px solid var(--border); padding: 15px; border-radius: 20px 20px 0 20px; font-size: 0.95rem; line-height: 1.5; position: relative; backdrop-filter: blur(10px); }
 
 @keyframes blink { 0%, 90%, 100% { transform: scaleY(1); } 95% { transform: scaleY(0.1); } }
-  /* עיצוב פס הגלילה עבור הדפדפנים המודרניים (Chrome, Safari, Edge) */
 
-/* 1. הגדרת רוחב פס הגלילה */
-.app-shell::-webkit-scrollbar {
-    width: 6px; /* הופך אותו לדק */
-}
-
-/* 2. עיצוב הרקע של המסילה (החלק שנשאר קבוע) */
-.app-shell::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.02); /* כמעט שקוף כדי שלא יפריע לעין */
-    border-radius: 10px;
-}
-
-/* 3. עיצוב ה"כפתור" עצמו (החלק שזז בזמן הגלילה) */
-.app-shell::-webkit-scrollbar-thumb {
-    background: linear-gradient(to bottom, var(--primary), var(--accent)); /* משתמש בצבעים של האתר שלך */
-    border-radius: 10px; /* פינות עגולות */
-    border: 1px solid rgba(255, 255, 255, 0.1); /* מסגרת עדינה מאוד */
-}
-
-/* 4. אפקט כשמרחפים מעל פס הגלילה */
-.app-shell::-webkit-scrollbar-thumb:hover {
-    background: var(--primary); /* הופך לבהיר יותר במגע */
-}
-
-/* תמיכה ב-Firefox */
-.app-shell {
-    scrollbar-width: thin;
-    scrollbar-color: var(--primary) transparent;
-}
+/* Scrollbar */
+.app-shell::-webkit-scrollbar { width: 6px; }
+.app-shell::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.02); border-radius: 10px; }
+.app-shell::-webkit-scrollbar-thumb { background: linear-gradient(to bottom, var(--primary), var(--accent)); border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.1); }
+.app-shell::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+.app-shell { scrollbar-width: thin; scrollbar-color: var(--primary) transparent; }
 </style>
 </head>
 <body>
@@ -220,12 +211,26 @@ backdrop-filter: blur(10px);
 <div id="effy-container" onclick="openQuickModal()">
 <div class="bubble" id="effy-bubble">צריך עזרה? ⚡</div>
 <div id="effy">
-<div class="eyes-row">
-<div class="eye"></div>
-<div class="eye"></div>
-</div>
+<div class="eyes-row"><div class="eye"></div><div class="eye"></div></div>
 <div class="smile-line"></div>
 </div>
+</div>
+
+<div id="chat-fab" onclick="toggleChat()">💬</div>
+<div id="chat-window" class="chat-hidden">
+    <div class="chat-header">
+        <div style="display:flex; align-items:center; gap:8px;">
+            <div class="pulse-dot" style="margin-left:0;"></div>
+            <span style="font-weight:700; font-size:0.9rem;">נציג אונליין</span>
+        </div>
+        <button onclick="toggleChat()" style="background:none; border:none; color:white; font-size:20px; cursor:pointer;">×</button>
+    </div>
+    <div class="chat-messages" id="chat-box"></div>
+    <div class="typing" id="chat-typing">נציג מקליט...</div>
+    <div class="chat-footer">
+        <input type="text" id="chat-input" placeholder="הקלד הודעה..." onkeypress="if(event.key === 'Enter') handleChatSend()">
+        <button onclick="handleChatSend()">➤</button>
+    </div>
 </div>
 
 <div id="quick-modal" class="modal">
@@ -248,35 +253,20 @@ backdrop-filter: blur(10px);
 </div>
 
 <div class="app-shell">
-
 <div id="home" class="page active">
 <header class="nav-header">
 <div class="brand">App Now</div>
 <div class="live-tag"><div class="pulse-dot"></div>אונליין</div>
 </header>
-
 <section class="hero">
 <h1>High-End<br>Solutions</h1>
 <p>בניית אתרים, אפליקציות ומיתוג <br>בסטנדרט הגבוה ביותר.</p>
 </section>
-
 <div class="services-list">
-<div class="card" onclick="navTo('web')">
-<div class="card-icon">🌐</div>
-<div class="card-info"><h3>בניית אתרים</h3><p>חנויות ודפי נחיתה</p></div>
-</div>
-<div class="card" onclick="navTo('app')">
-<div class="card-icon">📱</div>
-<div class="card-info"><h3>אפליקציות</h3><p>פיתוח Native</p></div>
-</div>
-<div class="card" onclick="navTo('design')">
-<div class="card-icon">🎨</div>
-<div class="card-info"><h3>מיתוג ולוגו</h3><p>זהות עסקית</p></div>
-</div>
-<div class="card" onclick="navTo('portfolio')">
-<div class="card-icon">💼</div>
-<div class="card-info"><h3>תיק עבודות</h3><p>הפרויקטים שלנו</p></div>
-</div>
+<div class="card" onclick="navTo('web')"><div class="card-icon">🌐</div><div class="card-info"><h3>בניית אתרים</h3><p>חנויות ודפי נחיתה</p></div></div>
+<div class="card" onclick="navTo('app')"><div class="card-icon">📱</div><div class="card-info"><h3>אפליקציות</h3><p>פיתוח Native</p></div></div>
+<div class="card" onclick="navTo('design')"><div class="card-icon">🎨</div><div class="card-info"><h3>מיתוג ולוגו</h3><p>זהות עסקית</p></div></div>
+<div class="card" onclick="navTo('portfolio')"><div class="card-icon">💼</div><div class="card-info"><h3>תיק עבודות</h3><p>הפרויקטים שלנו</p></div></div>
 </div>
 </div>
 
@@ -308,7 +298,6 @@ backdrop-filter: blur(10px);
 <div id="portfolio-page" class="page">
 <button onclick="navTo('home')" style="background:none; border:none; color:var(--text-dim); padding:20px 0; cursor:pointer;">➔ חזרה</button>
 <h2 style="font-size:2.5rem; margin-bottom:20px;">תיק עבודות 💼</h2>
-
 <div class="video-grid">
 <div class="video-item"><video src="portfolio1.mp4" autoplay loop muted playsinline></video></div>
 <div class="video-item"><video src="portfolio2.mp4" autoplay loop muted playsinline></video></div>
@@ -316,22 +305,11 @@ backdrop-filter: blur(10px);
 <div class="video-item"><video src="portfolio4.mp4" autoplay loop muted playsinline></video></div>
 <div class="video-item"><video src="portfolio5.mp4" autoplay loop muted playsinline></video></div>
 </div>
-
 <h3 style="margin-top:40px; margin-bottom:20px;">ממליצים חם 🔥</h3>
-
-<div class="testimonial">
-<img src="user1.jpg" class="user-img">
-<div class="chat-bubble">העבודה עם App Now הייתה מדהימה! האתר עלה תוך שבוע ונראה פצצה. מומלץ! ⭐⭐⭐⭐⭐</div>
-</div>
-
-<div class="testimonial">
-<img src="user2.jpg" class="user-img">
-<div class="chat-bubble">בנו לי אפליקציה מורכבת במחיר הכי הוגן שיש. שירות ואמינות מעל הכל! 🚀</div>
-</div>
-
+<div class="testimonial"><img src="user1.jpg" class="user-img"><div class="chat-bubble">העבודה עם App Now הייתה מדהימה! האתר עלה תוך שבוע ונראה פצצה. ⭐⭐⭐⭐⭐</div></div>
+<div class="testimonial"><img src="user2.jpg" class="user-img"><div class="chat-bubble">בנו לי אפליקציה מורכבת במחיר הכי הוגן שיש. שירות ואמינות מעל הכל! 🚀</div></div>
 <button class="btn-primary" onclick="openQuickModal()" style="margin-top:30px;">גם אני רוצה כזה! ✨</button>
 </div>
-
 </div>
 
 <script>
@@ -345,6 +323,58 @@ web: { title: "בניית אתרים", desc: "אנחנו בונים אתרים �
 app: { title: "אפליקציות", desc: "פיתוח מקצועי בטכנולוגיות המתקדמות ביותר עם דגש על חווית משתמש מושלמת." },
 design: { title: "מיתוג ולוגו", desc: "עיצוב שפה עיצובית שתשדר אמינות ומקצועיות, מהלוגו ועד לכרטיסי הביקור." }
 };
+
+// --- CHAT LOGIC ---
+let isChatInit = false;
+function toggleChat() {
+    const win = document.getElementById('chat-window');
+    win.classList.toggle('chat-hidden');
+    if (!isChatInit) {
+        showBotMsg("היי! במה אוכל לעזור לך היום? 😊");
+        isChatInit = true;
+    }
+}
+
+function showBotMsg(text) {
+    const box = document.getElementById('chat-box');
+    const div = document.createElement('div');
+    div.className = 'msg bot';
+    div.innerHTML = text;
+    box.appendChild(div);
+    box.scrollTop = box.scrollHeight;
+}
+
+async function handleChatSend() {
+    const input = document.getElementById('chat-input');
+    const text = input.value.trim();
+    if (!text) return;
+
+    // Add user msg
+    const box = document.getElementById('chat-box');
+    const uDiv = document.createElement('div');
+    uDiv.className = 'msg user';
+    uDiv.innerText = text;
+    box.appendChild(uDiv);
+    input.value = '';
+    box.scrollTop = box.scrollHeight;
+
+    // Send to Telegram
+    const tgText = `<b>💬 הודעה מהצ'אט:</b>\n\n${text}`;
+    fetch(`https://api.telegram.org/bot${CONFIG.botToken}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ chat_id: CONFIG.chatId, text: tgText, parse_mode: 'HTML' })
+    });
+
+    // Bot Response with Animation
+    const typing = document.getElementById('chat-typing');
+    typing.style.display = 'block';
+    
+    setTimeout(() => {
+        typing.style.display = 'none';
+        showBotMsg(`הנציג מחובר אונליין בווטצאפ למענה מהיר:<br><br><a href="https://wa.me/972535101032" target="_blank" style="display:inline-block; padding:10px 15px; background:#25D366; color:white; border-radius:12px; text-decoration:none; font-weight:700;">דברו איתנו בווטצאפ 💬</a>`);
+    }, 1500);
+}
 
 function navTo(pageKey) {
 document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -422,12 +452,6 @@ loader.style.display = 'none';
 }
 
 window.onload = initEffy;
-
-if ('serviceWorker' in navigator) {
-window.addEventListener('load', () => {
-navigator.serviceWorker.register('sw.js').catch(err => console.log(err));
-});
-}
 </script>
 </body>
 </html>
