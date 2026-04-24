@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="App Now">
+<title>App Now | פתרונות דיגיטל מתקדמים</title>
+
+<link rel="manifest" href="manifest.json">
+
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@100;300;400;700;900&display=swap" rel="stylesheet">
+
+<style>
+:root {
+--primary: #007AFF;
+--primary-dark: #0056b3;
+--accent: #5856D6;
+--bg: #050505;
+--card-bg: rgba(255, 255, 255, 0.06);
+--border: rgba(255, 255, 255, 0.1);
+--text: #ffffff;
+--text-dim: #a0a0a0;
+--success: #32d74b;
+--error: #ff453a;
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
+
+body {
+margin: 0; padding: 0;
+font-family: 'Heebo', sans-serif;
+background: var(--bg);
+color: var(--text);
+overflow: hidden;
+height: 100vh; width: 100vw;
+position: relative;
+}
+
+/* Container for content */
+.app-shell {
+height: 100vh; overflow-y: auto;
+padding: env(safe-area-inset-top) 20px env(safe-area-inset-bottom) 20px;
+position: relative; z-index: 10;
+}
+
+/* UI Animations */
+.page {
+display: none;
+animation: pageEnter 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+max-width: 500px; margin: 0 auto;
+}
+.page.active { display: block; }
+
+@keyframes pageEnter {
+from { opacity: 0; transform: scale(0.97) translateY(10px); filter: blur(4px); }
+to { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
+}
+
+/* Header & Live Pulse */
+.nav-header {
+display: flex; justify-content: space-between; align-items: center;
+padding: 20px 0;
+}
+.brand { font-weight: 900; font-size: 1.4rem; letter-spacing: -0.5px; }
+.live-tag {
+display: flex; align-items: center; font-size: 0.8rem;
+background: rgba(50, 215, 75, 0.1); color: var(--success);
+padding: 4px 12px; border-radius: 20px; font-weight: 700;
+}
+.pulse-dot {
+width: 7px; height: 7px; background: var(--success);
+border-radius: 50%; margin-left: 8px;
+animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+0% { box-shadow: 0 0 0 0 rgba(50, 215, 75, 0.6); }
+70% { box-shadow: 0 0 0 10px rgba(50, 215, 75, 0); }
+100% { box-shadow: 0 0 0 0 rgba(50, 215, 75, 0); }
+}
+
+/* Hero */
+.hero { text-align: center; padding: 40px 0; }
+.hero h1 { font-size: 3.2rem; font-weight: 900; margin: 0; line-height: 1; }
+.hero p { color: var(--text-dim); font-weight: 300; font-size: 1.1rem; margin-top: 10px; }
+
+/* Grid */
+.services-list { display: grid; gap: 16px; margin-top: 20px; }
+.card {
+background: var(--card-bg); border: 1px solid var(--border);
+border-radius: 24px; padding: 24px; display: flex; align-items: center;
+backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+transition: 0.2s; cursor: pointer;
+}
+.card:active { transform: scale(0.96); background: rgba(255,255,255,0.1); }
+.card-icon { font-size: 2.2rem; margin-left: 20px; }
+.card-info h3 { margin: 0; font-size: 1.3rem; }
+.card-info p { margin: 4px 0 0 0; color: var(--text-dim); font-size: 0.9rem; }
+
+/* Forms */
+.form-section { background: var(--card-bg); padding: 25px; border-radius: 28px; border: 1px solid var(--border); }
+.input-group { margin-bottom: 15px; }
+label { display: block; margin-bottom: 8px; font-size: 0.9rem; color: var(--text-dim); padding-right: 5px; }
+input {
+width: 100%; padding: 18px; background: rgba(0,0,0,0.3);
+border: 1px solid var(--border); border-radius: 16px;
+color: #fff; font-family: inherit; font-size: 1rem; transition: 0.3s;
+}
+input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(0,122,255,0.1); }
+
+/* Button & Loader */
+.btn-primary {
+width: 100%; padding: 20px; border: none; border-radius: 18px;
+background: linear-gradient(135deg, var(--primary), var(--accent));
+color: #fff; font-size: 1.2rem; font-weight: 700; cursor: pointer;
+position: relative; transition: 0.2s; margin-top: 10px;
+}
+.btn-primary:active { transform: scale(0.97); }
+.btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.loader-spin {
+display: none; width: 22px; height: 22px; border: 3px solid rgba(255,255,255,0.3);
+border-top-color: #fff; border-radius: 50%; animation: spin 0.8s linear infinite;
+position: absolute; left: 50%; top: 50%; margin: -11px 0 0 -11px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Effy - The Creature */
+#effy-container {
+position: fixed; z-index: 100; bottom: 80px; left: -100px;
+transition: left 1s ease; cursor: pointer;
+}
+#effy {
+width: 65px; height: 65px; background: #FFD60A; border-radius: 50%;
+display: flex; flex-direction: column; align-items: center; justify-content: center;
+box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+.eye { width: 10px; height: 10px; background: #000; border-radius: 50%; animation: blink 4s infinite; }
+.eyes-row { display: flex; gap: 10px; margin-bottom: 5px; }
+.smile-line { width: 20px; height: 8px; border: 2.5px solid #000; border-top: 0; border-radius: 0 0 12px 12px; }
+
+/* Speech Bubble */
+.bubble {
+position: absolute; bottom: 80px; right: -20px; background: white;
+color: black; padding: 10px 15px; border-radius: 18px 18px 18px 0;
+font-size: 0.85rem; font-weight: 700; width: 140px; opacity: 0;
+transform: translateY(10px); transition: 0.3s; pointer-events: none;
+box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+}
+.bubble.show { opacity: 1; transform: translateY(0); }
+
+/* Modals */
+.modal {
+position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+background: rgba(0,0,0,0.85); backdrop-filter: blur(10px);
+z-index: 1000; display: none; align-items: center; justify-content: center; padding: 20px;
+}
+.modal-body {
+background: #1c1c1e; width: 100%; max-width: 380px;
+border-radius: 32px; padding: 30px; position: relative;
+border: 1px solid var(--border);
+}
+.close-btn {
+position: absolute; top: 20px; right: 20px; width: 32px; height: 32px;
+background: var(--card-bg); border-radius: 50%; border: none; color: #fff;
+font-size: 1.2rem;
+}
+
+@keyframes blink { 0%, 90%, 100% { transform: scaleY(1); } 95% { transform: scaleY(0.1); } }
+</style>
+</head>
+<body>
+
+<div id="effy-container" onclick="openQuickModal()">
+<div class="bubble" id="effy-bubble">צריך עזרה? ⚡</div>
+<div id="effy">
+<div class="eyes-row">
+<div class="eye"></div>
+<div class="eye"></div>
+</div>
+<div class="smile-line"></div>
+</div>
+</div>
+
+<div id="quick-modal" class="modal">
+<div class="modal-body">
+<button class="close-btn" onclick="closeModal('quick-modal')">×</button>
+<h2 style="margin:0 0 10px 0; font-size:1.6rem; text-align:center;">ייעוץ מהיר בחינם 🎁</h2>
+<p style="text-align:center; color:var(--text-dim); margin-bottom:25px;">השאר פרטים ונחזור אליך תוך דקות!</p>
+<form id="q-form" onsubmit="handleForm(event, 'quick')">
+<div class="input-group">
+<input type="text" id="q-name" placeholder="שם מלא" required maxlength="20">
+</div>
+<div class="input-group">
+<input type="tel" id="q-phone" placeholder="טלפון (חובה)" required maxlength="10" pattern="[0-9]*">
+</div>
+<button type="submit" class="btn-primary" id="q-btn">
+<span class="btn-text">התקשרו אליי 📞</span>
+<div class="loader-spin"></div>
+</button>
+</form>
+<div id="q-success" style="display:none; text-align:center; padding:20px;">
+<div style="font-size:3rem; margin-bottom:10px;">✅</div>
+<h3>הבקשה נשלחה!</h3>
+<p>נציג מחובר כבר מטפל בך.</p>
+</div>
+</div>
+</div>
+
+<div class="app-shell">
+
+<div id="home" class="page active">
+<header class="nav-header">
+<div class="brand">App Now</div>
+<div class="live-tag"><div class="pulse-dot"></div>אונליין</div>
+</header>
+
+<section class="hero">
+<h1>High-End<br>Solutions</h1>
+<p>בניית אתרים, אפליקציות ומיתוג <br>בסטנדרט הגבוה ביותר, מהר ובמחיר הוגן.</p>
+</section>
+
+<div class="services-list">
+<div class="card" onclick="navTo('web')">
+<div class="card-icon">🌐</div>
+<div class="card-info">
+<h3>בניית אתרים</h3>
+<p>חנויות ודפי נחיתה ממירים במיוחד.</p>
+</div>
+</div>
+<div class="card" onclick="navTo('app')">
+<div class="card-icon">📱</div>
+<div class="card-info">
+<h3>אפליקציות</h3>
+<p>פיתוח Native ל-iOS ואנדרואיד.</p>
+</div>
+</div>
+<div class="card" onclick="navTo('design')">
+<div class="card-icon">🎨</div>
+<div class="card-info">
+<h3>מיתוג ולוגו</h3>
+<p>יצירת זהות עסקית בלתי נשכחת.</p>
+</div>
+</div>
+</div>
+</div>
+
+<div id="service-page" class="page">
+<button onclick="navTo('home')" style="background:none; border:none; color:var(--text-dim); padding:20px 0; cursor:pointer;">➔ חזרה לבית</button>
+
+<h2 id="s-title" style="font-size:2.5rem; margin:0 0 15px 0;"></h2>
+<p id="s-desc" style="line-height:1.7; font-weight:300; font-size:1.1rem; color:var(--text-dim); margin-bottom:30px;"></p>
+
+<div class="form-section">
+<form id="main-form" onsubmit="handleForm(event, 'main')">
+<input type="hidden" id="s-hidden-name">
+<div class="input-group">
+<label>איך קוראים לך?</label>
+<input type="text" id="m-name" placeholder="שם מלא" required maxlength="25">
+</div>
+<div class="input-group">
+<label>מספר טלפון</label>
+<input type="tel" id="m-phone" placeholder="050-0000000" required maxlength="10">
+</div>
+<div class="input-group">
+<label>שיטת חזרה מועדפת</label>
+<select id="m-method" style="width:100%; padding:18px; background:rgba(0,0,0,0.3); border:1px solid var(--border); border-radius:16px; color:#fff;">
+<option value="שיחה טלפונית">📞 שיחה טלפונית</option>
+<option value="הודעת וואטסאפ">💬 הודעת וואטסאפ</option>
+</select>
+</div>
+<button type="submit" class="btn-primary" id="m-btn">
+<span class="btn-text">התחל פרויקט 🚀</span>
+<div class="loader-spin"></div>
+</button>
+</form>
+
+<div id="m-success" style="display:none; text-align:center;">
+<div style="font-size:3rem;">🎉</div>
+<h2>הבקשה התקבלה!</h2>
+<p>אנחנו כבר מתאמים לך שיחה.</p>
+<button class="btn-primary" onclick="navTo('home')">חזרה לדף הבית</button>
+</div>
+</div>
+</div>
+
+</div>
+
+<script>
+const CONFIG = {
+botToken: '8359245682:AAFr9l5f0yMop4QrQ2wPfqBmamMLi1SFmgA',
+chatId: '8017590244'
+};
+
+const CONTENT = {
+web: { title: "בניית אתרים", desc: "האתר שלכם הוא הפנים של העסק. אנחנו בונים אתרים מהירים, מאובטחים ומעוצבים אישית שגורמים ללקוחות שלכם להגיד 'וואו'. משלב האיפיון ועד העלייה לאוויר - אנחנו איתכם." },
+app: { title: "אפליקציות", desc: "יש לכם רעיון לסטארטאפ? אנחנו נהפוך אותו לאפליקציה חלקה בחנויות. פיתוח מקצועי בטכנולוגיות המתקדמות ביותר עם דגש על חווית משתמש מושלמת." },
+design: { title: "מיתוג ולוגו", desc: "עיצוב זה לא רק יופי, זה אופי. אנחנו ניצור לכם שפה עיצובית שתשדר אמינות ומקצועיות, מהלוגו ועד לכרטיסי הביקור והדיגיטל." }
+};
+
+// Navigation
+function navTo(pageKey) {
+document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+if (pageKey === 'home') {
+document.getElementById('home').classList.add('active');
+} else {
+const s = CONTENT[pageKey];
+document.getElementById('s-title').innerText = s.title;
+document.getElementById('s-desc').innerText = s.desc;
+document.getElementById('s-hidden-name').value = s.title;
+document.getElementById('main-form').style.display = 'block';
+document.getElementById('m-success').style.display = 'none';
+document.getElementById('service-page').classList.add('active');
+}
+document.querySelector('.app-shell').scrollTop = 0;
+}
+
+// Effy Behavior
+function initEffy() {
+const effy = document.getElementById('effy-container');
+const bubble = document.getElementById('effy-bubble');
+const phrases = ["צריך עזרה? ⚡", "יש מבצע היום! 🎁", "דברו איתי 🗣️", "בואו נבנה חלום! ✨"];
+
+setTimeout(() => effy.style.left = '20px', 2000);
+
+setInterval(() => {
+if (Math.random() > 0.6) {
+bubble.innerText = phrases[Math.floor(Math.random() * phrases.length)];
+bubble.classList.add('show');
+setTimeout(() => bubble.classList.remove('show'), 4000);
+}
+}, 10000);
+}
+
+// Modals
+function openQuickModal() { document.getElementById('quick-modal').style.display = 'flex'; }
+function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+// Form Handling
+async function handleForm(e, type) {
+e.preventDefault();
+const isMain = type === 'main';
+const btn = document.getElementById(isMain ? 'm-btn' : 'q-btn');
+const btnText = btn.querySelector('.btn-text');
+const loader = btn.querySelector('.loader-spin');
+
+// Validation
+const phone = document.getElementById(isMain ? 'm-phone' : 'q-phone').value;
+if (!/^05\d{8}$/.test(phone)) {
+alert("אנא הזן מספר טלפון ישראלי תקין (10 ספרות)");
+return;
+}
+
+// Start Loading
+btn.disabled = true;
+btnText.style.opacity = '0';
+loader.style.display = 'block';
+
+const name = document.getElementById(isMain ? 'm-name' : 'q-name').value;
+const service = isMain ? document.getElementById('s-hidden-name').value : "שיחה דחופה (אפי)";
+const method = isMain ? document.getElementById('m-method').value : "חזרה טלפונית";
+
+const text = `<b>🚀 ליד חדש מ-App Now!</b>\n\n` +
+`<b>👤 שם:</b> ${name}\n` +
+`<b>📞 טלפון:</b> <code>${phone}</code>\n` +
+`<b>🎯 שירות:</b> ${service}\n` +
+`<b>💬 העדפה:</b> ${method}`;
+
+const waitTime = isMain ? 2000 : 1000;
+
+setTimeout(async () => {
+try {
+await fetch(`https://api.telegram.org/bot${CONFIG.botToken}/sendMessage`, {
+method: 'POST',
+headers: { 'Content-Type': 'application/json' },
+body: JSON.stringify({ chat_id: CONFIG.chatId, text: text, parse_mode: 'HTML' })
+});
+
+// Success UI
+loader.style.display = 'none';
+document.getElementById(isMain ? 'main-form' : 'q-form').style.display = 'none';
+document.getElementById(isMain ? 'm-success' : 'q-success').style.display = 'block';
+
+if (!isMain) setTimeout(() => closeModal('quick-modal'), 3000);
+
+} catch (err) {
+alert("תקלה בשליחה. נסה שוב.");
+btn.disabled = false;
+btnText.style.opacity = '1';
+loader.style.display = 'none';
+}
+}, waitTime);
+}
+
+window.onload = initEffy;
+// תדביק את זה בסוף ה-Script הקיים
+if ('serviceWorker' in navigator) {
+window.addEventListener('load', () => {
+navigator.serviceWorker.register('sw.js')
+.then(reg => console.log('Service Worker Registered!'))
+.catch(err => console.log('Service Worker Failed', err));
+});
+}
+
+</script>
+</body>
+</html>
