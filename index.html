@@ -183,6 +183,36 @@ backdrop-filter: blur(10px);
 }
 
 @keyframes blink { 0%, 90%, 100% { transform: scaleY(1); } 95% { transform: scaleY(0.1); } }
+  /* עיצוב פס הגלילה עבור הדפדפנים המודרניים (Chrome, Safari, Edge) */
+
+/* 1. הגדרת רוחב פס הגלילה */
+.app-shell::-webkit-scrollbar {
+    width: 6px; /* הופך אותו לדק */
+}
+
+/* 2. עיצוב הרקע של המסילה (החלק שנשאר קבוע) */
+.app-shell::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.02); /* כמעט שקוף כדי שלא יפריע לעין */
+    border-radius: 10px;
+}
+
+/* 3. עיצוב ה"כפתור" עצמו (החלק שזז בזמן הגלילה) */
+.app-shell::-webkit-scrollbar-thumb {
+    background: linear-gradient(to bottom, var(--primary), var(--accent)); /* משתמש בצבעים של האתר שלך */
+    border-radius: 10px; /* פינות עגולות */
+    border: 1px solid rgba(255, 255, 255, 0.1); /* מסגרת עדינה מאוד */
+}
+
+/* 4. אפקט כשמרחפים מעל פס הגלילה */
+.app-shell::-webkit-scrollbar-thumb:hover {
+    background: var(--primary); /* הופך לבהיר יותר במגע */
+}
+
+/* תמיכה ב-Firefox */
+.app-shell {
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary) transparent;
+}
 </style>
 </head>
 <body>
